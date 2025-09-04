@@ -2,7 +2,7 @@ Attribute VB_Name = "Module1"
 Public Target_cell_for_import_file As String
 Sub GetinputFile()
     Target_cell_for_import_file = "B7"
-    ' ƒtƒ@ƒCƒ‹–¼‚ğæ“¾
+    ' ãƒ•ã‚¡ã‚¤ãƒ«åã‚’å–å¾—
     Dim inputFile As Variant
     With Application.FileDialog(msoFileDialogFilePicker)
         If .Show = False Then
@@ -11,6 +11,6 @@ Sub GetinputFile()
         inputFile = .SelectedItems(1)
     End With
     
-    ' ƒtƒ@ƒCƒ‹–¼‚ğo—Í
+    ' ãƒ•ã‚¡ã‚¤ãƒ«åã‚’å‡ºåŠ›
     Range(Target_cell_for_import_file) = inputFile
 End Sub

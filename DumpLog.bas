@@ -1,81 +1,85 @@
 Attribute VB_Name = "DumpLog"
+Public Target_cell_for_import_file As String
+Public Target_cell_for_output_file As String
 Sub DumpLog()
-    ' “Ç‚İ‚İƒtƒ@ƒCƒ‹‚ÌƒpƒX‚ğæ“¾
+Target_cell_for_import_file = "B7"
+Target_cell_for_output_file = "B10"
+    ' èª­ã¿è¾¼ã¿ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹ã‚’å–å¾—
     Dim inputFile As String
-    inputFile = Range("B2")
-    ' o—ÍæƒtƒHƒ‹ƒ_‚ÌƒpƒX‚ğæ“¾
+    inputFile = Range(Target_cell_for_import_file)
+    ' å‡ºåŠ›å…ˆãƒ•ã‚©ãƒ«ãƒ€ã®ãƒ‘ã‚¹ã‚’å–å¾—
     Dim outputFolderPath As String
-    outputFolderPath = Range("B5")
-    ' ‹ó”’‚ğíœ‚·‚é
+    outputFolderPath = Range(Target_cell_for_output_file)
+    ' ç©ºç™½ã‚’å‰Šé™¤ã™ã‚‹
     inputFile = Replace(inputFile, " ", "")
-    inputFile = Replace(inputFile, "@", "")
+    inputFile = Replace(inputFile, "ã€€", "")
     
-     ' “ü—Í‚ª‚³‚ê‚Ä‚¢‚È‚¢Aw’è‚³‚ê‚½ƒtƒ@ƒCƒ‹‚ª‘¶İ‚µ‚È‚¢ê‡‚Ìˆ—
+     ' å…¥åŠ›ãŒã•ã‚Œã¦ã„ãªã„ã€æŒ‡å®šã•ã‚ŒãŸãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã—ãªã„å ´åˆã®å‡¦ç†
     If inputFile = "" Or Dir(inputFile) = "" Then
-        MsgBox "“Ç‚İ‚İƒtƒ@ƒCƒ‹‚ª‘¶İ‚µ‚Ü‚¹‚ñB", vbExclamation
-        'ƒZƒ‹‚ÉƒtƒH[ƒJƒX‚ğˆÚ“®‚·‚é
-        Range("B2").Select
+        MsgBox "èª­ã¿è¾¼ã¿ãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã—ã¾ã›ã‚“ã€‚", vbExclamation
+        ' ã‚»ãƒ«ã«ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ã‚’ç§»å‹•ã™ã‚‹
+        Range(Target_cell_for_import_file).Select
         Exit Sub
     End If
     
-    If outputFolderPath = "" Then ' o—ÍæƒtƒHƒ‹ƒ_‚ª‹ó”’‚Ìê‡
-        ' “Ç‚İ‚İƒtƒ@ƒCƒ‹‚Æ“¯‚¶ƒtƒHƒ‹ƒ_‚ğo—ÍæƒtƒHƒ‹ƒ_‚Æ‚·‚é
+    If outputFolderPath = "" Then ' å‡ºåŠ›å…ˆãƒ•ã‚©ãƒ«ãƒ€ãŒç©ºç™½ã®å ´åˆ
+        ' èª­ã¿è¾¼ã¿ãƒ•ã‚¡ã‚¤ãƒ«ã¨åŒã˜ãƒ•ã‚©ãƒ«ãƒ€ã‚’å‡ºåŠ›å…ˆãƒ•ã‚©ãƒ«ãƒ€ã¨ã™ã‚‹
         outputFolderPath = Left(inputFile, (InStrRev(inputFile, "\") - 1))
-        Range("B5") = outputFolderPath
+        Range(Target_cell_for_output_file) = outputFolderPath
     End If
     
-    Dim inputFileLen As Integer ' “Ç‚İ‚İƒtƒ@ƒCƒ‹‚ÌƒpƒX‚Ì’·‚³
+    Dim inputFileLen As Integer ' èª­ã¿è¾¼ã¿ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹ã®é•·ã•
     inputFileLen = Len(inputFile)
-    Dim outputFilePath As String ' o—Íƒtƒ@ƒCƒ‹‚ÌƒpƒX
-    Dim outputFileName As String ' o—Íƒtƒ@ƒCƒ‹–¼
+    Dim outputFilePath As String ' å‡ºåŠ›ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹
+    Dim outputFileName As String ' å‡ºåŠ›ãƒ•ã‚¡ã‚¤ãƒ«å
     outputFileName = makeFileName()
     outputFilePath = outputFolderPath & "\" & outputFileName
-    Dim outputSheetName As String ' o—Í‚·‚éƒV[ƒg–¼
-    outputSheetName = "ƒ_ƒ“ƒv"
+    Dim outputSheetName As String ' å‡ºåŠ›ã™ã‚‹ã‚·ãƒ¼ãƒˆå
+    outputSheetName = "ãƒ€ãƒ³ãƒ—"
     Dim fOutputObj As Object
-    Dim outputWb As Workbook  ' o—Í‚·‚éƒ[ƒNƒuƒbƒN
-    Dim outputWs As Worksheet ' o—Í‚·‚éƒV[ƒg
-    Dim tempFilePath As String '@V‚µ‚¢o—ÍƒtƒHƒ‹ƒ_[
+    Dim outputWb As Workbook  ' å‡ºåŠ›ã™ã‚‹ãƒ¯ãƒ¼ã‚¯ãƒ–ãƒƒã‚¯
+    Dim outputws As Worksheet ' å‡ºåŠ›ã™ã‚‹ã‚·ãƒ¼ãƒˆ
+    Dim tempFilePath As String 'ã€€æ–°ã—ã„å‡ºåŠ›ãƒ•ã‚©ãƒ«ãƒ€ãƒ¼
     
-    If Dir(inputFile) <> "" Then ' B2‚Åw’è‚³‚ê‚½“Ç‚İ‚İƒtƒ@ƒCƒ‹‚ª‘¶İ‚·‚éê‡
-        If Dir(outputFolderPath, vbDirectory) <> "" Then ' B5‚Åw’è‚³‚ê‚½o—ÍæƒtƒHƒ‹ƒ_‚ª‘¶İ‚·‚éê‡
-            ' ƒuƒbƒN‚ğV‹Kì¬
+    If Dir(inputFile) <> "" Then ' B2ã§æŒ‡å®šã•ã‚ŒãŸèª­ã¿è¾¼ã¿ãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã™ã‚‹å ´åˆ
+        If Dir(outputFolderPath, vbDirectory) <> "" Then ' B5ã§æŒ‡å®šã•ã‚ŒãŸå‡ºåŠ›å…ˆãƒ•ã‚©ãƒ«ãƒ€ãŒå­˜åœ¨ã™ã‚‹å ´åˆ
+            ' ãƒ–ãƒƒã‚¯ã‚’æ–°è¦ä½œæˆ
             Set outputWb = Workbooks.Add
-            ' ƒV[ƒg–¼‚ğ•ÏX
-            Set outputWs = outputWb.Sheets(1)
-            outputWs.Name = outputSheetName
+            ' ã‚·ãƒ¼ãƒˆåã‚’å¤‰æ›´
+            Set outputws = outputWb.Sheets(1)
+            outputws.Name = outputSheetName
             
-             '@V‚µ‚¢o—ÍƒtƒHƒ‹ƒ_[
+             ' æ–°ã—ã„å‡ºåŠ›ãƒ•ã‚©ãƒ«ãƒ€ãƒ¼
             tempFilePath = outputFolderPath & "\Temp_CRLF.txt"
-            ' Œ³ƒtƒ@ƒCƒ‹‚ğƒRƒs[‚µ‚Ä‰üsƒR[ƒh•ÏŠ·
+            ' å…ƒãƒ•ã‚¡ã‚¤ãƒ«ã‚’ã‚³ãƒ”ãƒ¼ã—ã¦æ”¹è¡Œã‚³ãƒ¼ãƒ‰å¤‰æ›
             Call LfToCrlfCopy(inputFile, tempFilePath)
     
-            ' ƒ_ƒ“ƒvˆ—iŒ³ƒtƒ@ƒCƒ‹‚Å‚Í‚È‚­ˆêƒtƒ@ƒCƒ‹‚ğg—pj
-            Call OutputDumpData(tempFilePath, outputWs)
+            ' ãƒ€ãƒ³ãƒ—å‡¦ç†ï¼ˆå…ƒãƒ•ã‚¡ã‚¤ãƒ«ã§ã¯ãªãä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä½¿ç”¨ï¼‰
+            Call OutputDumpData(tempFilePath, outputws)
 
-            ' ƒuƒbƒN‚ğ•Û‘¶
+            ' ãƒ–ãƒƒã‚¯ã‚’ä¿å­˜
             outputWb.SaveAs outputFilePath
 
-            ' ƒuƒbƒN‚ğ•Â‚¶‚é
+            ' ãƒ–ãƒƒã‚¯ã‚’é–‰ã˜ã‚‹
             outputWb.Close
             
-            ' ˆêƒtƒ@ƒCƒ‹‚ğíœ
+            ' ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«ã‚’å‰Šé™¤
             If Dir(tempFilePath) <> "" Then
                  Kill tempFilePath
             End If
 
             
-             ' ³í‚Éo—Í‚³‚ê‚½‚±‚Æ‚ğ¦‚·ƒƒbƒZ[ƒW‚ğ•\¦!!!!!!!'
+             ' æ­£å¸¸ã«å‡ºåŠ›ã•ã‚ŒãŸã“ã¨ã‚’ç¤ºã™ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤º!!!!!!!'
             Call ShowCompletionMessage
             
         Else
-            ' ƒGƒ‰[ƒƒbƒZ[ƒW‚ğo—Í
-            MsgBox "o—ÍæƒtƒHƒ‹ƒ_‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ", vbExclamation
+            ' ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’å‡ºåŠ›
+            MsgBox "å‡ºåŠ›å…ˆãƒ•ã‚©ãƒ«ãƒ€ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“", vbExclamation
         End If
         
-    Else  ' B2‚Åw’è‚³‚ê‚½“Ç‚İ‚İƒtƒ@ƒCƒ‹‚ª‘¶İ‚µ‚È‚¢ê‡
-        ' ƒGƒ‰[ƒƒbƒZ[ƒW‚ğo—Í
-        MsgBox "“Ç‚İ‚İƒtƒ@ƒCƒ‹‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ", vbExclamation
+    Else  ' B2ã§æŒ‡å®šã•ã‚ŒãŸèª­ã¿è¾¼ã¿ãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã—ãªã„å ´åˆ
+        ' ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’å‡ºåŠ›
+        MsgBox "èª­ã¿è¾¼ã¿ãƒ•ã‚¡ã‚¤ãƒ«ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“", vbExclamation
         
     End If
     
@@ -83,54 +87,65 @@ End Sub
 
 
 Function makeFileName() As String
-    ' “ú•t_‚ğæ“¾
+    ' æ—¥ä»˜_æ™‚åˆ»ã‚’å–å¾—
     Dim dateTime
     dateTime = Now()
     
-    ' •¶š—ñ‚É•ÏŠ·
+    ' æ–‡å­—åˆ—ã«å¤‰æ›
     Dim retStr As String
     retStr = Format(dateTime, "yyyymmdd_hmmss")
     
     makeFileName = retStr & "_log_dump.xlsx"
 End Function
 
-'#### o—Í ####'
-Function OutputDumpData(ByVal tempFilePath As String, ByVal outputWs As Worksheet)
-    ' o—Íæ‚ÌƒV[ƒg‚ğƒNƒŠƒA‚·‚é
-    outputWs.Cells.Clear
+'#### å‡ºåŠ› ####'
+Function OutputDumpData(ByVal tempFilePath As String, ByVal outputws As Worksheet)
+    ' å‡ºåŠ›å…ˆã®ã‚·ãƒ¼ãƒˆã‚’ã‚¯ãƒªã‚¢ã™ã‚‹
+    outputws.Cells.Clear
     
-    ' •Ï”éŒ¾
-    Dim serchStr As String              ' o—Í‚·‚éƒf[ƒ^‚©‚ğ”»’f‚·‚é–Úˆó
-    Dim flgRead As Boolean              ' “Ç‚İ‚İƒf[ƒ^ƒtƒ‰ƒO
-    Dim readLine As String              ' “Ç‚İ‚ñ‚¾—ñ‚Ì•¶š—ñ
-    Dim headerList As New Collection    ' ƒwƒbƒ_‚Ì•¶š—ñ‚ÌƒŠƒXƒg
-    Dim lastKey As String               ' ÅŒã‚Ìkeyiƒwƒbƒ_‚Ì€–Új
-    Dim clmMax As Integer               ' Å‘å—ñ”
-    Dim row As Integer                  ' s
-    Dim rowHeader As Integer            ' ƒwƒbƒ_‚ğo—Í‚·‚és
-    Dim clm As Integer                  ' —ñ
-    Dim clmNo As Integer                ' No‚ğ•\¦‚·‚é—ñ
-    Dim cntBlock As Integer             ' o—ÍƒuƒƒbƒN‚ÌƒJƒEƒ“ƒg
-    Dim cntData As Integer              ' ƒf[ƒ^‚ÌƒJƒEƒ“ƒg
+    ' å¤‰æ•°å®£è¨€
+    Dim serchStr As String              ' å‡ºåŠ›ã™ã‚‹ãƒ‡ãƒ¼ã‚¿ã‹ã‚’åˆ¤æ–­ã™ã‚‹ç›®å°
+    Dim flgRead As Boolean              ' èª­ã¿è¾¼ã¿ãƒ‡ãƒ¼ã‚¿ãƒ•ãƒ©ã‚°
+    Dim readLine As String              ' èª­ã¿è¾¼ã‚“ã åˆ—ã®æ–‡å­—åˆ—
+    Dim headerDict As Object            ' å‡ºåŠ›ã—ãŸãƒ˜ãƒƒãƒ€åã‚’å«ã‚€è¾æ›¸
+    Set headerDict = CreateObject("Scripting.Dictionary")
+    Dim lastKey As String               ' æœ€å¾Œã®keyï¼ˆãƒ˜ãƒƒãƒ€ã®é …ç›®ï¼‰
+    Dim clmMax As Integer               ' æœ€å¤§åˆ—æ•°
+    Dim row As Integer                  ' è¡Œ
+    Dim rowHeader As Integer            ' ãƒ˜ãƒƒãƒ€ã‚’å‡ºåŠ›ã™ã‚‹è¡Œ
+    Dim clm As Integer                  ' åˆ—
+    Dim clmNo As Integer                ' Noã‚’è¡¨ç¤ºã™ã‚‹åˆ—
+    Dim cntBlock As Integer             ' å‡ºåŠ›ãƒ–ãƒ­ãƒƒã‚¯ã®ã‚«ã‚¦ãƒ³ãƒˆ
+    Dim cntData As Integer              ' ãƒ‡ãƒ¼ã‚¿ã®ã‚«ã‚¦ãƒ³ãƒˆ
+    Dim secVal As Double                ' ç§’æ•°ï¼ˆsec)
+    Dim nanoVal As Double               ' ãƒŠãƒç§’(nanosec)
+    Dim flgsec As Boolean               ' secãŒèª­ã¿è¾¼ã¾ã‚ŒãŸã‹ã®ãƒ•ãƒ©ã‚°
+    Dim flgnanosec As Boolean           ' nanosecãŒèª­ã¿è¾¼ã¾ã‚ŒãŸã‹ã®ãƒ•ãƒ©ã‚°
+    Dim key As String                   ' ãƒ˜ãƒƒãƒ€
+    Dim item As String                  ' ãƒ‡ãƒ¼ã‚¿
     
     serchStr = "---"
     flgRead = False
     cntBlock = 0
-    row = 3         ' ‰½s–Ú‚©‚ço—Í‚·‚é‚©‚ğİ’è
+    row = 3         ' ä½•è¡Œç›®ã‹ã‚‰å‡ºåŠ›ã™ã‚‹ã‹ã‚’è¨­å®š
     rowHeader = row
-    clmNo = 2       ' ‰½—ñ–Ú‚©‚ço—Í‚·‚é‚©‚ğİ’è
+    clmNo = 2       ' ä½•åˆ—ç›®ã‹ã‚‰å‡ºåŠ›ã™ã‚‹ã‹ã‚’è¨­å®š
     cntData = 1
     clmMax = clmNo
+    secVal = 0
+    nanoVal = 0
+    flgsec = False
+    flgnanosec = False
     
-    ' “ü—Íƒtƒ@ƒCƒ‹ƒI[ƒvƒ“
+    ' å…¥åŠ›ãƒ•ã‚¡ã‚¤ãƒ«ã‚ªãƒ¼ãƒ—ãƒ³
     Open tempFilePath For Input As #1
     
     Do Until EOF(1)
-        ' 1—ñ‚¸‚Â“Ç‚İ‚Ş
+        ' 1åˆ—ãšã¤èª­ã¿è¾¼ã‚€
         Line Input #1, readLine
         
-        If readLine = serchStr Then ' --- ‚Ìê‡
-            ' “Ç‚İ‚İƒtƒ‰ƒO‚ğON‚É‚·‚é
+        If readLine = serchStr Then ' --- ã®å ´åˆ
+            ' èª­ã¿è¾¼ã¿ãƒ•ãƒ©ã‚°ã‚’ONã«ã™ã‚‹
             flgRead = True
             
             cntBlock = cntBlock + 1
@@ -138,122 +153,208 @@ Function OutputDumpData(ByVal tempFilePath As String, ByVal outputWs As Workshee
             row = row + 1
             clm = clmNo + 1
             
-            If cntBlock = 1 Then ' 1‚Â–Ú‚ÌƒuƒƒbƒN‚Ìê‡
-                ' [No](ƒwƒbƒ_)‚ğo—Í
-                outputWs.Cells(rowHeader, clmNo).NumberFormatLocal = "@"
-                outputWs.Cells(rowHeader, clmNo) = "No"
+            If cntBlock = 1 Then ' 1ã¤ç›®ã®ãƒ–ãƒ­ãƒƒã‚¯ã®å ´åˆ
+                ' [No](ãƒ˜ãƒƒãƒ€)ã‚’å‡ºåŠ›
+                outputws.Cells(rowHeader, clmNo).NumberFormatLocal = "@"
+                outputws.Cells(rowHeader, clmNo) = "No"
             End If
             
-            ' No—ñ‚ğo—Í
-            outputWs.Cells(row, clmNo) = cntBlock
+            ' Noåˆ—ã‚’å‡ºåŠ›
+            outputws.Cells(row, clmNo).NumberFormatLocal = "@"
+            outputws.Cells(row, clmNo) = cntBlock
             
-        ElseIf flgRead Then ' [---] ˆÈ~‚Ìê‡
-            Dim key As String
-            Dim item As String
+        ElseIf flgRead Then ' [---] ä»¥é™ã®å ´åˆ
             
-            If Left(readLine, 1) = "-" Then ' -‚©‚çn‚Ü‚é•¶š—ñ‚Ìê‡
-            
-                If cntBlock = 1 Then ' 1‚Â–Ú‚ÌƒuƒƒbƒN‚Ìê‡
-                    ' ƒwƒbƒ_‚ğo—Í
-                    outputWs.Cells(rowHeader, clm).NumberFormatLocal = "@"
-                    outputWs.Cells(rowHeader, clm) = lastKey & "_" & cntData
-                End If
+            If Left(LTrim(readLine), 1) = "-" Then   ' æœ€åˆã®éç©ºç™½æ–‡å­—ãŒ "-" ã®å ´åˆ
+                key = lastKey & "_" & cntData
+                ' åŒã˜ã‚­ãƒ¼ãŒè¤‡æ•°å›å‡ºç¾ã™ã‚‹å ´åˆã«å‚™ãˆã¦ã€ã‚­ãƒ¼åã«é€£ç•ªã‚’ä»˜ã‘ã¦ä¸€æ„ã«è­˜åˆ¥
+                ' ä¾‹: sec_1, sec_2, sec_3 ãªã©
+                clm = RegisterHeader(headerDict, key, clmNo, rowHeader, outputws)
+                ' ã‚¢ã‚¤ãƒ†ãƒ ã‚’å‡ºåŠ›
+                item = GetItemStr(readLine)
+                item = Trim(Mid(item, 2)) ' å…ˆé ­ã® "-" ã‚’é™¤å»
+                Call WriteItem(outputws, row, clm, item)
                 
-                ' ƒAƒCƒeƒ€‚ğo—Í
-                item = Replace(readLine, " ", "")
-                item = Replace(item, "@", "")
-                outputWs.Cells(row, clm).NumberFormatLocal = "@"
-                outputWs.Cells(row, clm) = item
-                
-                If clm > clmMax Then ' o—Í‚µ‚½—ñ‚ªÅ‘å—ñ”‚æ‚è‘½‚¢ê‡
+                If clm > clmMax Then ' å‡ºåŠ›ã—ãŸåˆ—ãŒæœ€å¤§åˆ—æ•°ã‚ˆã‚Šå¤šã„å ´åˆ
                     clmMax = clm
                 End If
-                clm = clm + 1
-                cntData = cntData + 1
+                    clm = clm + 1
+                    cntData = cntData + 1
                 
-            ElseIf InStr(readLine, ":") > 0 Then '[:]‚ğŠÜ‚Ş•¶š—ñ‚Ìê‡
+            ElseIf InStr(readLine, ":") > 0 Then ' [:]ã‚’å«ã‚€æ–‡å­—åˆ—ã®å ´åˆ
+                Debug.Print readLine
+                'å…ˆé ­ã®ç©ºç™½æ•°ã‚’æ•°ãˆã‚‹
+                NumberofLeadingspace = CountLeadingSpaces(readLine)
+                Debug.Print "ç©ºç™½æ•°:" & NumberofLeadingspace
+                
                 item = GetItemStr(readLine)
                 key = GetKeyStr(readLine)
                 lastKey = key
                 cntData = 1
                 
-                If cntBlock = 1 Then ' 1‚Â–Ú‚ÌƒuƒƒbƒN‚Ìê‡
-                    ' ƒwƒbƒ_‚ğo—Í
-                    outputWs.Cells(rowHeader, clm).NumberFormatLocal = "@"
-                    outputWs.Cells(rowHeader, clm) = key
-                End If
-                ' ƒAƒCƒeƒ€‚ğo—Í
-                outputWs.Cells(row, clm).NumberFormatLocal = "@"
-                outputWs.Cells(row, clm) = item
                 
-                If clm > clmMax Then  ' o—Í‚µ‚½—ñ‚ªÅ‘å—ñ”‚æ‚è‘½‚¢ê‡
+                'æ–°ã—ã„ãƒ˜ãƒƒãƒ€ç™»éŒ²
+                clm = RegisterHeader(headerDict, key, clmNo, rowHeader, outputws)
+              
+                ' ã‚¢ã‚¤ãƒ†ãƒ ã‚’å‡ºåŠ›
+                Call WriteItem(outputws, row, clm, item)
+                
+                ' sec/nanosec ã‚’è¨˜éŒ²
+                If key = "sec" Then ' ãƒ˜ãƒƒãƒ€ãŒsecã ã£ãŸã‚‰
+                    If IsNumeric(item) Then
+                        secVal = CDbl(item) ' æ–‡å­—åˆ—ã‹ã‚‰æ•°å€¤ã«å¤‰æ›
+                        flgsec = True
+                        Cells(row, clm).NumberFormatLocal = "0_ "  ' ã‚»ãƒ«ã‚’æ•°å€¤ã«ã™ã‚‹
+                    End If
+                ElseIf key = "nanosec" Then ' ãƒ˜ãƒƒãƒ€ãŒnanosecã ã£ãŸã‚‰
+                    If IsNumeric(item) Then
+                        nanoVal = CDbl(item) ' æ–‡å­—åˆ—ã‹ã‚‰æ•°å€¤ã«å¤‰æ›
+                        flgnanosec = True
+                        Cells(row, clm).NumberFormatLocal = "0_ " ' ã‚»ãƒ«ã‚’æ•°å€¤ã«ã™ã‚‹
+                    End If
+                End If
+                
+                ' ä¸¡æ–¹æƒã£ãŸã‚‰ timestamp ã‚’å‡ºåŠ›
+                If flgsec And flgnanosec Then
+                    ' æ—¥æ™‚å½¢å¼ã«å¤‰æ›ã—ã¦å‡ºåŠ›
+                    clm = WriteTimestamp(headerDict, clmNo, rowHeader, row, secVal, nanoVal, outputws)
+                    
+                If clm > clmMax Then  ' å‡ºåŠ›ã—ãŸåˆ—ãŒæœ€å¤§åˆ—æ•°ã‚ˆã‚Šå¤šã„å ´åˆ
                     clmMax = clm
                 End If
                 clm = clm + 1
+                
+                ' ãƒ•ãƒ©ã‚°ã‚’ãƒªã‚»ãƒƒãƒˆï¼ˆæ¬¡ã®è¡Œã«å‚™ãˆã‚‹ï¼‰
+                flgsec = False
+                flgnanosec = False
+                
+                End If
             End If
         End If
     Loop
     
-    ' ˜g‚ğ’Ç‰Á
-    outputWs.Range(outputWs.Cells(rowHeader, clmNo), outputWs.Cells(row, clmMax)).Borders.LineStyle = xlContinuous
-    ' —ñ•’²®
-    outputWs.Columns.AutoFit
-    
-    ' ƒtƒ@ƒCƒ‹ƒNƒ[ƒY
+    ' æ ã‚’è¿½åŠ 
+    outputws.Range(outputws.Cells(rowHeader, clmNo), outputws.Cells(row, clmMax)).Borders.LineStyle = xlContinuous
+    ' åˆ—å¹…èª¿æ•´
+    outputws.Columns.AutoFit
+
+    ' ãƒ•ã‚¡ã‚¤ãƒ«ã‚¯ãƒ­ãƒ¼ã‚º
     Close #1
-    
+
 End Function
 
 
-'#### Key‚ğæ“¾ ####'
+'#### Keyã‚’å–å¾— ####'
 Function GetKeyStr(ByVal inputStr As String) As String
     Dim retStr As String
     retStr = Left(inputStr, InStr(inputStr, ":") - 1)
-    '‹ó”’•¶š—ñ‚Ííœ‚·‚é
+    'ç©ºç™½æ–‡å­—åˆ—ã¯å‰Šé™¤ã™ã‚‹
     retStr = Replace(retStr, " ", "")
-    retStr = Replace(retStr, "@", "")
+    retStr = Replace(retStr, "ã€€", "")
     GetKeyStr = retStr
 End Function
 
-
-'#### item‚ğæ“¾ ####'
+'#### itemã‚’å–å¾— ####'
 Function GetItemStr(ByVal inputStr As String) As String
     Dim retStr As String
     retStr = Mid(inputStr, InStr(inputStr, ":") + 1)
-    '‹ó”’•¶š—ñ‚Ííœ‚·‚é
+    'ç©ºç™½æ–‡å­—åˆ—ã¯å‰Šé™¤ã™ã‚‹
     retStr = Replace(retStr, " ", "")
-    retStr = Replace(retStr, "@", "")
+    retStr = Replace(retStr, "ã€€", "")
     GetItemStr = retStr
 End Function
 
-
-'### ³í‚Éo—Í‚Å‚«‚½‚©•\¦###'
+'### æ­£å¸¸ã«å‡ºåŠ›ã§ããŸã‹è¡¨ç¤º###'
 Sub ShowCompletionMessage()
     Dim res As Integer
-    res = MsgBox("Š®—¹‚µ‚Ü‚µ‚½", vbOKOnly)
+    res = MsgBox("å®Œäº†ã—ã¾ã—ãŸ", vbOKOnly)
 End Sub
 
-
-'#### ‰üsƒR[ƒh•ÏŠ· ####'
-
+'#### æ”¹è¡Œã‚³ãƒ¼ãƒ‰å¤‰æ› ####'
 Function LfToCrlfCopy(ByVal inputFile As String, ByVal tempFilePath As String)
     Dim FileNum As Integer
     Dim FileContent As String
     Dim NewContent As String
 
-    ' Œ³ƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚Ş
+    ' å…ƒãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚€
     FileNum = FreeFile
     Open inputFile For Input As #FileNum
     FileContent = Input(LOF(FileNum), #FileNum)
     Close #FileNum
 
-    ' ‰üsƒR[ƒh‚ğ•ÏŠ·iLF ¨ CRLFj
+    ' æ”¹è¡Œã‚³ãƒ¼ãƒ‰ã‚’å¤‰æ›ï¼ˆLF â†’ CRLFï¼‰
     NewContent = Replace(FileContent, vbLf, vbCrLf)
 
-    ' ˆêƒtƒ@ƒCƒ‹‚É•Û‘¶
+    ' ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«ã«ä¿å­˜
     FileNum = FreeFile
     Open tempFilePath For Output As #FileNum
     Print #FileNum, NewContent
     Close #FileNum
 End Function
 
+' #### æ–°ãƒ˜ãƒƒãƒ€ãƒ¼ç™»éŒ² #### '
+Function RegisterHeader(headerDict As Object, key As String, clmNo As Integer, rowHeader As Integer, outputws As Worksheet) As Integer
+    Dim clm As Integer
+    If Not headerDict.exists(key) Then          ' æ–°ã—ã„ãƒ‡ãƒ¼ã‚¿é …ç›®ã®å ´åˆ
+        clm = headerDict.Count + clmNo + 1      ' æ–°ã—ã„ãƒ‡ãƒ¼ã‚¿é …ç›®ã«å¯¾ã™ã‚‹ãƒ˜ãƒƒãƒ€ã‚’ç”Ÿæˆ
+        headerDict.Add key, clm
+        ' ãƒ˜ãƒƒãƒ€å‡ºåŠ›
+        outputws.Cells(rowHeader, clm).NumberFormatLocal = "@"
+        outputws.Cells(rowHeader, clm) = key
+    Else
+        clm = headerDict(key)
+    End If
+    RegisterHeader = clm
+End Function
+
+' #### timestampã‚’ç”Ÿæˆãƒ»å‡ºåŠ› #### '
+Function WriteTimestamp(headerDict As Object, clmNo As Integer, rowHeader As Integer, row As Integer, secVal As Double, nanoVal As Double, outputws As Worksheet) As Integer
+    Dim timestamp As Double             ' UNIXã‚¿ã‚¤ãƒ ã‚¹ã‚¿ãƒ³ãƒ—ï¼ˆç§’ï¼‹ãƒŠãƒç§’ï¼‰
+    Dim timestampStr As String          ' æ—¥æ™‚å½¢å¼ã«å¤‰æ›ã—ãŸæ–‡å­—åˆ—
+    Dim clm As Integer
+    
+    ' 1970å¹´1æœˆ1æ—¥ã‹ã‚‰ã®çµŒéç§’æ•°ã‚’æ—¥æ™‚å½¢å¼ã«å¤‰æ›ã—ã¦å‡ºåŠ›
+    timestamp = secVal + nanoVal / 1000000000#
+    timestampStr = Format(DateAdd("s", timestamp, #1/1/1970#), "yyyy-mm-dd HH:MM:SS")
+    If Not headerDict.exists("timestamp") Then ' æ–°ã—ã„ã‚­ãƒ¼é …ç›®ã®å ´åˆ
+        clm = headerDict.Count + clmNo + 1
+        headerDict.Add "timestamp", clm
+        ' ãƒ˜ãƒƒãƒ€å‡ºåŠ›
+        outputws.Cells(rowHeader, clm).NumberFormatLocal = "@"
+        outputws.Cells(rowHeader, clm) = "timestamp"
+        Else
+        clm = headerDict("timestamp") ' clmã‚’è¿”ã™
+    End If
+    ' ã‚¢ã‚¤ãƒ†ãƒ ã‚’å‡ºåŠ›
+    outputws.Cells(row, headerDict("timestamp")).NumberFormatLocal = "yyyy-mm-dd HH:MM:SS" ' ã‚»ãƒ«ã®è¡¨ç¤ºå½¢å¼ã‚’ã€Œå¹´æœˆæ—¥æ™‚åˆ†ç§’ã€ã«è¨­å®šï¼ˆä¾‹: 2025-08-04 09:00:00ï¼‰
+    outputws.Cells(row, headerDict("timestamp")) = timestampStr ' è¨ˆç®—ã•ã‚ŒãŸUNIXã‚¿ã‚¤ãƒ ã‚¹ã‚¿ãƒ³ãƒ—ï¼ˆ1970å¹´1æœˆ1æ—¥ã‹ã‚‰ã®çµŒéç§’æ•°ï¼‰ã‚’æ—¥æ™‚æ–‡å­—åˆ—ã¨ã—ã¦å‡ºåŠ›
+End Function
+
+' #### ã‚»ãƒ«ã«ãƒ‡ãƒ¼ã‚¿ã‚’å‡ºåŠ› #### '
+Function WriteItem(outputws As Worksheet, row As Integer, clm As Integer, item As String) As Boolean
+    On Error GoTo ErrHandler
+    outputws.Cells(row, clm).NumberFormatLocal = "@"
+    outputws.Cells(row, clm) = item
+    WriteItem = True
+    Exit Function
+ErrHandler:
+    WriteItem = False
+End Function
+
+' #### å…ˆé ­ã®ç©ºç™½æ•°ã‚’æ•°ãˆã‚‹ #### '
+Function CountLeadingSpaces(readLine As String) As Long
+    Dim Spacecount As Long  ' ç©ºç™½ã®æ•°
+    Dim FirstCharacter As String ' 1æ–‡å­—ç›®
+    
+    Spacecount = 1 ' åˆæœŸå€¤ï¼‘
+    
+    Do While Spacecount <= Len(readLine)
+        FirstCharacter = Mid(readLine, Spacecount, 1)
+        If FirstCharacter = " " Then  ' åŠè§’ã‚¹ãƒšãƒ¼ã‚¹ã®å ´åˆ
+            Spacecount = Spacecount + 1
+        Else
+            Exit Do ' æ–‡å­—ãŒå‡ºç¾ã—ãŸã‚‰
+        End If
+    Loop
+    CountLeadingSpaces = Spacecount - 1
+End Function

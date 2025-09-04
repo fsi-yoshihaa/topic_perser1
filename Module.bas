@@ -2,16 +2,16 @@ Attribute VB_Name = "GetFileName"
 Public Target_cell_for_output_file As String
 Sub GetOutputFolder()
     Target_cell_for_import_file = "B10"
-    ' ƒtƒHƒ‹ƒ_–¼‚ğæ“¾
+    ' ãƒ•ã‚©ãƒ«ãƒ€åã‚’å–å¾—
     Dim outputFolder As Variant
     With Application.FileDialog(msoFileDialogFolderPicker)
-        If .Show = False Then ' ƒLƒƒƒ“ƒZƒ‹ƒ{ƒ^ƒ“‰Ÿ‰º
+        If .Show = False Then ' ã‚­ãƒ£ãƒ³ã‚»ãƒ«ãƒœã‚¿ãƒ³æŠ¼ä¸‹æ™‚
             Exit Sub
         End If
         outputFolder = .SelectedItems(1)
     End With
     
-    ' ƒtƒ@ƒCƒ‹–¼‚ğo—Í
+    ' ãƒ•ã‚¡ã‚¤ãƒ«åã‚’å‡ºåŠ›
     Range(Target_cell_for_import_file) = outputFolder
 End Sub
 
